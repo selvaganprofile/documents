@@ -1,0 +1,140 @@
+TTMS Simplification SAD Outline
+-------------------------------
+
+FOR INCEPTION Phase - I think you only need to finish sections 1..8 and sections 17..18.  Just to be clear this seems like a lot of sections but I think everything for Inception Phase can be done in about 20-25 pages.
+70-80% of your contents will be focused on the "integration" section that we can work on during the Elaboration Phase.  For the Inception Phase just have the "table of contents" setup for sections 9..16.
+
+1.0 ... 4.0 - Whatever is listed in the SAD template.
+5.0 Architecturally Significant Use Case
+	5.1 - Inbound Data Flow from ICL to TTMS
+		* Describe the use case / flow
+		* Describe the problem context / what needs to be solved architecturally
+		* Refer to section of the SAD where this problem is solved
+	5.2 - Outbound Data Flow from TTMS to ICL
+		* Same level / style of content as section 5.1
+	5.3 - Internal Integrations with TMS Auto Systems
+		* Same level / style of content as section 5.1
+	5.4 - High volume data load / Memory Intensive Operations
+		* Same level / style of content as section 5.1
+	5.5 - Etc.
+		* Same level / style of content as section 5.1
+	5.6 - Etc.
+
+6.0 Solution Scenarios
+	6.1 - TTMS Replacement vs. Outsource to ASP Vendor
+		* Describe the options that were considered
+		* Diagram if needed to describe the options - otherwise 1-3 paragraphs is enough here
+		* Describe Pros / Cons OR reason for making the decision
+		* Refer to the section where the solution decision is described in more detail
+	6.2 - Real Time Integration vs. Batch Mode Integration
+		* Same level / style of content as section 6.1
+	6.3 - Sync vs. Async Communication Pattern
+		6.3.1 - For ICL Integration
+			* Same level / style of content as section 6.1
+		6.3.2 - For Internal Integrations
+			* Same level / style of content as section 6.1
+	6.4 - SOAP Web Services vs. RESTful Web Services
+		* Same level / style of content as section 6.1
+	6.5 - Etc.
+		* I don't see any major scenarios were alternates are being considered
+		* Ideally every major "architecturally significant use case" should have a "solution scenario"; but if multiple alternatives were not considered then skipping the "scenarios" is fine.
+
+7.0 Architecture Decision Log
+	* Use standard template to record every major "architectural" decision.
+	* Detailed Design level decisions should be recorded in the ADD - not listed here.
+
+8.0 Logical View
+	8.1 - As Is
+	8.2 - To Be
+		* One or more diagrams representing the complete solution
+		* Description for each diagram - what does the diagram say, how does it fit into the overal solution.
+		* If only one diagram is used then each box in the diagram should be described - what does that "box" do; how does it fit into the overall solution.
+
+9.0 Integration View
+	9.1 - Integration Patterns
+		9.1.1 - Web Service Pattern - Inbound & Outbound
+			* Small diagram to establish the pattern level "context diagram"
+			* Description of the pattern and where it fits with in the overall solution
+			* Tech Details @ the "architecture" level
+		9.1.2 - Web Service Pattern - Message Format
+			* Refer to ICE document for overall structure of JSON
+			* Describe the "data area" of the JSON structure - generic pattern; details will be for each service
+		9.1.3 - Web Service Pattern - Message Exchange
+			* Describe the high level message exchange pattern we discussed with ICL
+			* Logical sequence diagram should convey the flow between ICL and TTMS
+			* If you think there will be any internal web service calls to TOMS/etc. then that should be separate section or sub-section
+		9.1.4 - Web Service Pattern - Error Handling
+			9.1.4.1 - Transport level Error Handling
+			* Stuff we talked about with ICL
+			9.1.4.2 - Business level Error Handling
+			* Stuff we talked about with ICL
+		9.1.5 - Web Service Pattern - Sequencing / Conversation across Service Calls
+		9.1.6 - MQ Pattern - Message Exchange
+		9.1.6 - MQ Pattern - Message Format
+		9.1.7 - MQ Pattern - Error Handling
+			9.1.7.1 - Transport level Error Handling
+			9.1.7.2 - Business level Error Handling
+		9.1.8 - MQ Pattern - Sequencing / Conversation across MQ Messages
+		9.1.9 - FTP based Internal Batch Jobs
+		9.1.10 - FTP based Internal Batch Jobs - File Format
+		9.1.11 - Direct Database Updates
+		9.1.12 - SFTP based External Batch Jobs (TBD for Elaboration Phase)
+	9.2 - Systems Integrations
+		9.2.1 - VDW integration
+		9.2.2 - TOMS integration
+			* Same level / style of content as section 9.2.1
+		9.2.3 - Etc.
+			* Same level / style of content as section 9.2.1
+		9.2.4 - Etc.
+	9.3 - Security Integrations
+		9.3.1 - EIG integration for Web Service Security
+			* BRIEF intro to the topic (one paragraph)
+			* Refer to Section 11 for detailed security coverage
+		9.3.2 - Any other "security" related integrations???
+			* I suggest you put TESS SSO topic in Security section 11.
+	9.4 - DevOps / ITOps Integrations
+		9.4.1 - Build Farm Integration
+		9.4.2 - FogLight Monitoring Integration
+
+
+10.0 - Deployment View
+	* We need to work through this after the Inception Phase is done
+
+11.0 - Security View
+	11.1 - ICL - TESS SSO Integration
+	11.2 - External Web Service Security Pattern
+	11.3 - Internal Web Service Security Pattern (if any)
+	11.4 - MQ Security Pattern
+	11.5 - Internal FTP Security Pattern
+	11.6 - External FTP Security Pattern
+
+12.0 - Process View
+	* We need to work through this after the Inception Phase is done
+13.0 - Implementation View
+	* We need to work through this after the Inception Phase is done
+14.0 - Technology View
+	* We need to work through this after the Inception Phase is done
+15.0 - Components View
+	* We need to work through this after the Inception Phase is done
+16.0 - Service View
+	* We need to work through this after the Inception Phase is done
+
+17.0 - Risk Log
+	* Identify any architecturally siginificant risks
+
+18.0 - Open Items
+	* Any open items from the Inception Phase should be documented
+
+10.2 = ICL REST to TTMS REST
+
+10.4 = TTMS Ext REST to MQ  and  TTMS Int REST to MQ
+
+
+10.4 = TTMS Java to MQ
+
+
+10.3 = TTMS External.war to TTMS Internal.war
+
+10.3 = Internal.war to Mainframe, DB2, FTP, etc.
+
+10.3 = Java to FTP / DB2 / Mainframe

@@ -1,0 +1,11 @@
+The new TTMS Governor system  is secure application which will be using TESS Security Framework for Authentication & Authorization and adheres to most of the security guidelines enforced by the EA team.
+Communication from the client browser to the web server will be over a Secure Socket Layer (SSL).The Governor system will be accessed in TMS intranet and internet access channels.
+ 
+
+Following are the key security specification of the TTMS Integration application 
+
+Two way mutual SSL between ICL and EIG (TMS) (Inbound and Outbound Services)
+One Way SSL between EIG to TTMS Inbound Services Services
+EIG has to berform the service account validation for the requests coming from ICL (TTMS  Inbound Services)
+EIG has to perform the service account validation for the requests coming from TTMS (TTMS Outbound Service)
+ICL has to perform the service account validation the requests coming from EIG(TTMS outbound)

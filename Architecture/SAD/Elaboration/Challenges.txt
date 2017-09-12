@@ -1,0 +1,12 @@
+Arch Solution Scenarios if new Scenarios If it is identified 
+Solution options may be added based on the new scenarios
+Outbound UCS to define the validation and business rules and number of transformation scenarios 
+Confirm to use single event or complete incremental method that will changes
+All the Interfaces integration of Sub System layer based on the above confirmation
+
+Updates needed for the diagrams and flows explained
+If any flat file based decision may introduce the new integration pattern if only option of file is being considered 
+the infrastrcture and NFR requirement 
+Deployment View will be changed based on the solution to adopt incase go for complete flat file
+
+

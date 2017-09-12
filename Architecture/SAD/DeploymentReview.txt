@@ -1,0 +1,6 @@
+Apche Server notation
+War file no ear file
+Move the domain section to top of the section
+Remove one Web server from the diagram
+Introduce the diagram with MQ instead of F5
+

@@ -1,0 +1,3 @@
+
+Provide a secure Internet-Facing gateway for the automated transmission of information to and from TLS business partners
+Provide tracking of data sent to/from business partners
