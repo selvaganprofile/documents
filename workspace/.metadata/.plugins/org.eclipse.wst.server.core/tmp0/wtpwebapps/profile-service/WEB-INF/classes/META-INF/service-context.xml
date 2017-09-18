@@ -1,0 +1,85 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	   xmlns:cxf="http://cxf.apache.org/core"
+	   
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		 http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd 
+		 http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+	
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	
+	<context:component-scan base-package="com.vu.au" />
+	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging />
+		</cxf:features>
+	</cxf:bus>
+	
+	<bean id="serverExceptionHandler" class="com.vu.au.helpers.server.ServerExceptionHandler" /> 
+	
+	<!-- JSON -->
+	<bean id="objectMapperCustom" class="com.vu.au.helpers.util.ObjectMapperCustom" />
+	<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+		<property name="mapper" ref="objectMapperCustom" />
+	</bean>
+	
+	<!-- Resources -->
+	<bean id="contentTypeResourceImpl" class="com.vu.au.profile.resources.ContentTypeResourceImpl" />
+	<bean id="encoderTypeResourceImpl" class="com.vu.au.profile.resources.EncoderTypeResourceImpl" />
+	<bean id="executionProfileOutputResourceImpl" class="com.vu.au.profile.resources.ExecutionProfileOutputResourceImpl" />
+	<bean id="executionProfileOutputValueResourceImpl" class="com.vu.au.profile.resources.ExecutionProfileOutputValueResourceImpl" />
+	<bean id="executionProfileResourceImpl" class="com.vu.au.profile.resources.ExecutionProfileResourceImpl" />
+	<bean id="executionTypeResourceImpl" class="com.vu.au.profile.resources.ExecutionTypeResourceImpl" />
+	<bean id="profileGroupResourceImpl" class="com.vu.au.profile.resources.ProfileGroupResourceImpl" />
+	<bean id="profileResourceImpl" class="com.vu.au.profile.resources.ProfileResourceImpl" />
+	<bean id="snippetAttributeResourceImpl" class="com.vu.au.profile.resources.SnippetAttributeResourceImpl" />
+	<bean id="snippetAttrValueResourceImpl" class="com.vu.au.profile.resources.SnippetAttrValueResourceImpl" />
+	<bean id="snippetResourceImpl" class="com.vu.au.profile.resources.SnippetResourceImpl" />
+
+	<bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+		<property name="version" value="2.0" />
+		<property name="resourcePackage" value="com.vu.au.profile.resources" />
+		<property name="basePath" value="/profile-service/1.0" />
+		<property name="title" value="Profile Service" />
+		<property name="description" value="A REST service to query for profile things." />
+		<property name="contact" value=""/>
+		<property name="license" value=""/>
+	</bean>
+	
+	<jaxrs:server id="restContainer" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="contentTypeResourceImpl" />
+			<ref bean="encoderTypeResourceImpl" />
+			<ref bean="executionProfileOutputResourceImpl" />
+			<ref bean="executionProfileOutputValueResourceImpl" />
+			<ref bean="executionProfileResourceImpl" />
+			<ref bean="executionTypeResourceImpl" />
+			<ref bean="profileGroupResourceImpl" />
+			<ref bean="profileResourceImpl" />
+			<ref bean="snippetAttributeResourceImpl" />
+			<ref bean="snippetAttrValueResourceImpl" />
+			<ref bean="snippetResourceImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<ref bean="jacksonJsonProvider" />
+			<ref bean="serverExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<ref bean="swagger2Feature" />
+		</jaxrs:features>
+	</jaxrs:server>
+
+</beans>

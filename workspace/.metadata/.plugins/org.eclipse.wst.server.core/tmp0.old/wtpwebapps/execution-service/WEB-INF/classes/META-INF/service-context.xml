@@ -1,0 +1,147 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:cxf="http://cxf.apache.org/core"
+
+	xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		 http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd 
+		 http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<context:component-scan base-package="
+		com.vu.au.helpers
+		com.vu.au.resources.execution
+		com.vu.au.resources.library
+		com.vu.au.execution
+		com.vu.au.profile.dao
+		com.vu.au.workorder.dao
+		com.vu.au.vault.dao" />
+
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging />
+		</cxf:features>
+	</cxf:bus>
+
+
+	<bean id="serverExceptionHandler" class="com.vu.au.helpers.server.ServerExceptionHandler" />
+
+	<!-- For JMS -->
+	<bean id="intelliVUJmsTemplate" class="com.vu.au.helpers.jms.IntelliVUJmsTemplate" />
+
+	<bean id="credentialsProvider" class="com.amazonaws.auth.profile.ProfileCredentialsProvider">
+		<constructor-arg name="profilesConfigFilePath"
+			value="/etc/vbq/automation/automationEnvironment.properties" />
+		<constructor-arg name="profileName" value="default" />
+	</bean>
+
+	<bean id="clientConfiguration" class="com.amazonaws.ClientConfiguration">
+		<property name="protocol" value="HTTP" />
+		<property name="connectionTimeout" value="${intellivu-queue-timeout}" />
+		<property name="maxErrorRetry" value="${intellivu-queue-max-error-retry}" />
+		<property name="maxConnections" value="${intellivu-queue-max-connections}" />
+		<property name="proxyHost" value="${forwardproxy.url:#{null}}" />
+		<property name="proxyPort" value="${forwardproxy.port:#{0}}" />
+	</bean>
+
+	<bean id="connectionFactoryBuilder"
+		class="com.amazon.sqs.javamessaging.SQSConnectionFactory$Builder">
+		<property name="regionName" value="${intellivu-queue-region}" />
+		<property name="awsCredentialsProvider" ref="credentialsProvider" />
+		<property name="clientConfiguration" ref="clientConfiguration" />
+	</bean>
+
+	<bean id="connectionFactory" class="com.amazon.sqs.javamessaging.SQSConnectionFactory"
+		factory-bean="connectionFactoryBuilder" factory-method="build" />
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+	</bean>
+
+
+	<!-- Schedule -->
+	<bean id="threadPoolTaskScheduler"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler" />
+	<bean id="executionScheduleModule" class="com.vu.au.execution.schedule.ExecutionScheduleModule" />
+
+	<!-- Clients -->
+	<bean id="keyManager" class="com.vu.au.helpers.crypto.KeyManager" />
+	<bean id="authentication"
+		class="com.vu.au.execution.tools.elemental.helper.Authentication" />
+	<bean id="hooverCxfClient" class="com.vu.au.helpers.broker.HooverCxfClient" />
+	<bean id="asperaSOAPClient" class="com.vu.au.aspera.soap.client.AsperaSOAPClient" />
+
+
+	<!-- JSON -->
+	<bean id="objectMapperCustom" class="com.vu.au.helpers.util.ObjectMapperCustom" />
+	<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+		<property name="mapper" ref="objectMapperCustom" />
+	</bean>
+
+
+	<!-- Resources -->
+	<bean id="executionDistributionResourceImpl"
+		class="com.vu.au.execution.resources.ExecutionDistributionResourceImpl" />
+	<bean id="executionEngineResourceImpl" class="com.vu.au.execution.resources.ExecutionEngineResourceImpl" />
+	<bean id="executionJobResourceImpl" class="com.vu.au.execution.resources.ExecutionJobResourceImpl" />
+	<bean id="executionJobTimeReportResourceImpl"
+		class="com.vu.au.execution.resources.ExecutionJobTimeReportResourceImpl" />
+	<bean id="executionPlainJobGeneratorResourceImpl"
+		class="com.vu.au.execution.resources.ExecutionPlainJobGeneratorResourceImpl" />
+	<bean id="executionResourceImpl" class="com.vu.au.execution.resources.ExecutionResourceImpl" />
+	<bean id="executionStatusResourceImpl" class="com.vu.au.execution.resources.ExecutionStatusResourceImpl" />
+	<bean id="facilityResourceImpl" class="com.vu.au.execution.resources.FacilityResourceImpl" />
+	<bean id="mediaFolderResourceImpl" class="com.vu.au.execution.resources.MediaFolderResourceImpl" />
+	<bean id="systemPropertiesResourceImpl" class="com.vu.au.execution.resources.SystemPropertiesResourceImpl" />
+	<bean id="tokenExecutionEngineResourceImpl"
+		class="com.vu.au.execution.resources.TokenExecutionEngineResourceImpl" />
+	<bean id="tokenResourceImpl" class="com.vu.au.execution.resources.TokenResourceImpl" />
+
+	<bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+		<property name="version" value="2.0" />
+		<property name="resourcePackage" value="com.vu.au.execution.resources" />
+		<property name="basePath" value="/execution-service/1.0" />
+		<property name="title" value="Execution Service" />
+		<property name="description"
+			value="A REST service to query for execution things." />
+		<property name="contact" value="" />
+		<property name="license" value="" />
+	</bean>
+
+	<jaxrs:server id="restContainer" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="executionDistributionResourceImpl" />
+			<ref bean="executionEngineResourceImpl" />
+			<ref bean="executionJobResourceImpl" />
+			<ref bean="executionJobTimeReportResourceImpl" />
+			<ref bean="executionPlainJobGeneratorResourceImpl" />
+			<ref bean="executionResourceImpl" />
+			<ref bean="executionStatusResourceImpl" />
+			<ref bean="facilityResourceImpl" />
+			<ref bean="mediaFolderResourceImpl" />
+			<ref bean="systemPropertiesResourceImpl" />
+			<ref bean="tokenExecutionEngineResourceImpl" />
+			<ref bean="tokenResourceImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<ref bean="jacksonJsonProvider" />
+			<ref bean="serverExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<ref bean="swagger2Feature" />
+		</jaxrs:features>
+	</jaxrs:server>
+
+
+
+</beans>

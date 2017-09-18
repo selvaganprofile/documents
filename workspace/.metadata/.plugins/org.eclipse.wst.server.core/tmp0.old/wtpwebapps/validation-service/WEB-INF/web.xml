@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>validation-service</display-name>
+		<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/META-INF/application-context.xml</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>log4j-config-location</param-name>
+		<param-value>WEB-INF/log4j2.xml</param-value>
+	</context-param>
+	<listener>
+<!-- 		<listener-class>com.vu.au.helpers.guice.logging.Log4jStarterContextListener</listener-class> -->
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<servlet>
+		<servlet-name>CXFServlet</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CXFServlet</servlet-name>
+		<url-pattern>/1.0/*</url-pattern>
+	</servlet-mapping>
+	
+<!-- 	<filter> -->
+<!-- 		<filter-name>guiceFilter</filter-name> -->
+<!-- 		<filter-class>com.google.inject.servlet.GuiceFilter</filter-class> -->
+<!-- 	</filter> -->
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>guiceFilter</filter-name> -->
+<!-- 		<url-pattern>/1.0/*</url-pattern> -->
+<!-- 	</filter-mapping> -->
+<!-- 	<listener> -->
+<!-- 		<listener-class>com.vu.au.validation.GuiceServletConfig</listener-class> -->
+<!-- 	</listener> -->
+	   <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>doc</servlet-name>
+        <jsp-file>/api-docs/index.html</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>doc</servlet-name>
+        <url-pattern>/api-docs/docs</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/api-docs/*</url-pattern>
+    </servlet-mapping>	
+</web-app>

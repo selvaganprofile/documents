@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <RollingFile name="RollingFile" fileName="${sys:catalina.home}/logs/Key-Service.log" filePattern="${sys:catalina.home}/logs/Key-Service.log.%d{yyyy-MM-dd}" append="true">
+      <PatternLayout>
+      	<Pattern>%-5level | %d{yyyy-MM-dd HH:mm:ss,SSS} | 1.0 | - | %msg | {Thread: %t, Filename: %c{1.}:%L}%n</Pattern>
+      </PatternLayout>
+      <Policies>
+      	<TimeBasedTriggeringPolicy interval = "1" modulate = "true"/>
+      </Policies>
+    </RollingFile>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout>
+      	<Pattern>%-5level | %d{yyyy-MM-dd HH:mm:ss,SSS} | 1.0 | - | %msg | {Thread: %t, Filename: %c{1.}:%L}%n</Pattern>
+      </PatternLayout>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.vu.au" level="info">
+      <AppenderRef ref="RollingFile"/>
+    </Logger>
+    <Root level="debug">
+      <AppenderRef ref = "Console"/>
+    </Root>
+  </Loggers>
+</Configuration>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="profile-db" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<non-jta-data-source>java:/comp/env/jdbc/ProfileDB</non-jta-data-source>
+		<class>com.vu.au.models.profile.AffiliateDrm</class>
+		<class>com.vu.au.models.profile.Drm</class>
+		<class>com.vu.au.models.profile.EncoderType</class>
+		<class>com.vu.au.models.profile.EntityType</class>
+		<class>com.vu.au.models.profile.Playlist</class>
+		<class>com.vu.au.models.profile.PlaylistEntry</class>
+		<class>com.vu.au.models.profile.Profile</class>
+		<class>com.vu.au.models.profile.ExecutionProfile</class>
+		<class>com.vu.au.models.profile.ExecutionProfileOutput</class>
+		<class>com.vu.au.models.profile.ExecutionProfileOutputValue</class>
+		<class>com.vu.au.models.profile.ProfileGroup</class>
+		<class>com.vu.au.models.profile.ProfileGroupRule</class>
+		<class>com.vu.au.models.profile.Snippet</class>
+		<class>com.vu.au.models.profile.SnippetAttribute</class>
+		<class>com.vu.au.models.profile.SnippetAttrValue</class>
+		<class>com.vu.au.models.profile.ContentType</class>
+		<class>com.vu.au.models.profile</class>
+
+		<properties>
+			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="javax.persistence.lock.timeout" value="0" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.temp.use_jdbc_metadata_defaults"
+				value="false" />
+			<property name="hibernate.default_schema" value="automation"/>
+			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+		</properties>
+			
+			
+		
+	</persistence-unit>
+</persistence>

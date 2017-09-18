@@ -1,0 +1,250 @@
+package com.vu.au.key.services.impl;
+
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+import com.vu.au.helpers.api.response.constants.ResponseConstants;
+import com.vu.au.helpers.crypto.KeyManager;
+import com.vu.au.helpers.crypto.api.CryptoHelper;
+import com.vu.au.helpers.exceptions.ConfigurationException;
+import com.vu.au.helpers.exceptions.CryptoException;
+import com.vu.au.helpers.exceptions.ServiceException;
+import com.vu.au.helpers.exceptions.ValidationException;
+import com.vu.au.helpers.logging.Log;
+import com.vu.au.helpers.util.HexStringUtil;
+import com.vu.au.key.constants.KeyResponseConstants;
+import com.vu.au.key.dao.KeysDao;
+import com.vu.au.key.dao.TrackTypeDao;
+import com.vu.au.key.generator.impl.CencKeyGenerator;
+import com.vu.au.key.services.CencService;
+import com.vu.au.models.key.KeyType;
+import com.vu.au.models.key.Keys;
+import com.vu.au.models.key.TrackType;
+import com.vu.au.models.key.request.KeyBasic;
+import com.vu.au.models.key.response.KeyResponse;
+import com.vu.au.models.vault.EncapsulationType;
+
+@Component
+public class CencServiceImpl implements CencService {
+
+	@Log
+	private static Logger log;
+
+	@Inject
+	private KeysDao cencKeysDao;
+
+	@Inject
+	private KeyManager keyManager;
+
+	@Inject
+	private TrackTypeDao trackTypeDao;
+
+	private static final String REMOVE_HYPHEN_KEYID = "removeHyphenKeyId";
+
+	@Override
+	@Transactional
+	public KeyResponse getCencKeySet(Multimap<String, String> queryParameters) throws ServiceException {
+
+		boolean removeHyphenKeyId = false;
+		if (queryParameters.containsKey(REMOVE_HYPHEN_KEYID)) {
+			removeHyphenKeyId = new Boolean(Iterables.get(queryParameters.get(REMOVE_HYPHEN_KEYID), 0)).booleanValue();
+			queryParameters.removeAll(REMOVE_HYPHEN_KEYID);
+		}
+
+		List<Keys> listCencKeys = cencKeysDao.list(queryParameters);
+
+		KeyResponse response = new KeyResponse();
+		List<Keys> listR = new ArrayList<Keys>();
+		if ((listCencKeys != null) && (!listCencKeys.isEmpty())) {
+			log.info(String.format("CencKeys found by the following query params: %s", queryParameters));
+			Key decryptKey = keyManager.getKey();
+			// Decrypting CencKeys
+			for (Keys key : listCencKeys) {
+				Keys keyR = new Keys();
+				keyR.setKeysId(key.getKeysId());
+				keyR.setActive(key.getActive());
+				keyR.setOriginId(key.getOriginId());
+				keyR.setAssetId(key.getAssetId());
+				keyR.setDateCreated(key.getDateCreated());
+				keyR.setProfileName(key.getProfileName());
+				keyR.setKeyType(key.getKeyType());
+				keyR.setEncapsulationType(key.getEncapsulationType());
+				keyR.setTrackType(key.getTrackType());
+				keyR.setMaxBitrate(key.getMaxBitrate());
+				try {
+					String keyId = CryptoHelper.decrypt(Base64.decodeBase64(key.getKeyId()), decryptKey);
+					keyR.setKeyId(keyId);
+					if (removeHyphenKeyId) {
+						keyR.setKeyId(keyId.replaceAll("-", ""));
+						log.info(String.format("The flag removeHyphenKeyId is TRUE, we replace '-'. Final value %s",
+								keyR.getKeyId()));
+					}
+					keyR.setContentKey(CryptoHelper.decrypt(Base64.decodeBase64(key.getContentKey()), decryptKey));
+					keyR.setKek(CryptoHelper.decrypt(Base64.decodeBase64(key.getKek()), decryptKey));
+				} catch (CryptoException e) {
+					log.error(KeyResponseConstants.NOTE_DECRYPT_FAILED, e);
+					throw new ConfigurationException(KeyResponseConstants.NOTE_DECRYPT_FAILED);
+				}
+				listR.add(keyR);
+			}
+
+			response.setKeys(listR);
+			response.setErrorMessage(ResponseConstants.MESSAGE_SUCCESS);
+
+		} else {
+			String error = String.format(KeyResponseConstants.MESSAGE_FAILED_BY_QP, queryParameters);
+			log.info(error);
+			response.setKeys(new ArrayList<Keys>());
+			response.setErrorMessage(error);
+		}
+
+		response.setMessage(ResponseConstants.MESSAGE_SUCCESS);
+
+		return response;
+	}
+
+	@Override
+	@Transactional
+	public KeyResponse createCencKeySet(KeyBasic cencKeyBasic) throws ServiceException {
+
+		KeyResponse response = new KeyResponse();
+
+		CencKeyGenerator prkg = new CencKeyGenerator();
+		byte[] byteArrayContentKey = prkg.generateKey(null, UUID.randomUUID());
+		byte[] byteArrayKek = prkg.generateKey(null, UUID.randomUUID());		
+
+		String cencKeyId = UUID.randomUUID().toString();
+		String contentKey = HexStringUtil.bytesToHex(byteArrayContentKey);
+		//kek: This parameter contains the 16-byte KEK used to unwrap the key value, in hexadecimal (32 hex characters)
+		String kek = HexStringUtil.bytesToHex(byteArrayKek); 
+
+		validateInputParams(cencKeyBasic);
+		if (StringUtils.isBlank(cencKeyBasic.getTrackTypeName())) {
+			cencKeyBasic.setTrackTypeName("N/A");
+			log.info("In create CencKeySet dont have the TrackTypeName, so we set \"N/A\" as default");
+		}
+		
+		List<TrackType> trackTypeList = trackTypeDao.getByName(cencKeyBasic.getTrackTypeName());
+		
+		if (trackTypeList == null || trackTypeList.isEmpty()) {
+			String message = String.format("The tracktype with name '%s' does not exists.",
+					cencKeyBasic.getTrackTypeName());
+			log.error(message);
+			throw new ValidationException(message);
+		}
+		
+		TrackType trackType = trackTypeList.get(0);
+
+		// Then, look in the DB to see if an existing record exists with this
+		// GroupAssetID and OriginID, if so, "Disable" that record and add a new
+		// one. Otherwise just add it to the DB.
+		Multimap<String, String> multimap = ArrayListMultimap.create();
+		EncapsulationType encapsulationType = EncapsulationType.Smooth;
+		if (cencKeyBasic.getEncapsulationType() != null) {
+			encapsulationType = EncapsulationType.getValue(cencKeyBasic.getEncapsulationType());
+		}
+		multimap.put("encapsulationType", encapsulationType.getType().toString());
+		multimap.put("assetId", cencKeyBasic.getAssetId());
+		multimap.put("originId", cencKeyBasic.getOriginId());
+		multimap.put("trackTypeName", cencKeyBasic.getTrackTypeName());
+		multimap.put("keyType", KeyType.Cenc.toString());
+		if (cencKeyBasic.getMaxBitrate() != null) {
+			multimap.put("maxBitrate", cencKeyBasic.getMaxBitrate().toString());
+		} else {
+			// Set default value
+			multimap.put("maxBitrate", "0");
+			cencKeyBasic.setMaxBitrate(0);
+		}
+
+		List<Keys> keyList = cencKeysDao.list(multimap);
+		if (keyList != null) {
+			for (Keys k : keyList) {
+				if (k.getActive()) {
+					k.setActive(false);
+					cencKeysDao.update(k);
+				}
+			}
+		}
+
+		// KeyId and ContentKey) must be encrypted with the KEY
+		// stored in memory when they are stored in the DB.
+
+		Keys cencKey = new Keys();
+		cencKey.setActive(true);
+		cencKey.setDateCreated(new Date());
+		cencKey.setAssetId(cencKeyBasic.getAssetId());
+		cencKey.setOriginId(cencKeyBasic.getOriginId());
+		cencKey.setKeyType(KeyType.Cenc);
+		cencKey.setProfileName(cencKeyBasic.getProfileName());
+		cencKey.setMaxBitrate(cencKeyBasic.getMaxBitrate());
+		cencKey.setEncapsulationType(encapsulationType);
+		cencKey.setTrackType(trackType);
+
+		// Encrypt parameters
+		try {
+			cencKey.setKeyId(Base64.encodeBase64String(CryptoHelper.encrypt(cencKeyId, keyManager.getKey())));
+			cencKey.setContentKey(Base64.encodeBase64String(CryptoHelper.encrypt(contentKey, keyManager.getKey())));
+			cencKey.setKek(Base64.encodeBase64String(CryptoHelper.encrypt(kek, keyManager.getKey())));
+		} catch (CryptoException e) {
+			log.error(e);
+			throw new ServiceException(e.getMessage());
+		}
+
+		// Send key to DDBB
+		cencKeysDao.create(cencKey);
+
+		// Setting unencrypted parameters again to return to client
+		Keys cencKeyResponse = new Keys();
+		cencKeyResponse.setKeysId(cencKey.getKeysId());
+		cencKeyResponse.setActive(true);
+		cencKeyResponse.setDateCreated(new Date());
+		cencKeyResponse.setAssetId(cencKeyBasic.getAssetId());
+		cencKeyResponse.setOriginId(cencKeyBasic.getOriginId());
+		cencKeyResponse.setProfileName(cencKeyBasic.getProfileName());
+		// cencKeyResponse.setKeyId(cencKeyId);
+		cencKeyResponse.setKeyId(cencKeyId.toString());
+		if (cencKeyBasic.getRemoveHyphenKeyId()) {
+			cencKeyResponse.setKeyId(cencKeyId.toString().replaceAll("-", ""));
+			log.info(String.format("The flag removeHyphenKeyId is TRUE, we replace '-'. Final value %s",
+					cencKeyResponse.getKeyId()));
+		}
+
+		cencKeyResponse.setContentKey(contentKey);
+		cencKeyResponse.setKek(kek);
+		cencKeyResponse.setMaxBitrate(cencKeyBasic.getMaxBitrate());
+		cencKeyResponse.setEncapsulationType(encapsulationType);
+		cencKeyResponse.setTrackType(trackType);
+
+		ArrayList<Keys> respList = new ArrayList<Keys>();
+		respList.add(cencKeyResponse);
+		response.setKeys(respList);
+
+		response.setErrorMessage(ResponseConstants.MESSAGE_SUCCESS);
+		response.setMessage(ResponseConstants.MESSAGE_SUCCESS);
+
+		return response;
+	}
+   // TO DO - Identify the Keyid parameters to update. Should be Asset id  and Origin id
+	private void validateInputParams(KeyBasic cencKeyBasic) throws ServiceException {
+		if (cencKeyBasic.getAssetId() == null || cencKeyBasic.getOriginId() == null
+				|| cencKeyBasic.getProfileName() == null) {
+			throw new ValidationException("Input parametes cannot be null");
+		}
+
+	}
+
+}

@@ -1,0 +1,66 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	   xmlns:cxf="http://cxf.apache.org/core"
+	   
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		 http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd 
+		 http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+	
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	
+	<context:component-scan base-package="com.vu.au" />
+	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging />
+		</cxf:features>
+	</cxf:bus>
+	
+	<bean id="objectMapperCustom" class="com.vu.au.helpers.util.ObjectMapperCustom" />
+
+	<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+		<property name="mapper" ref="objectMapperCustom" />
+	</bean>
+	
+	<bean id="serverExceptionHandler" class="com.vu.au.helpers.server.ServerExceptionHandler" />
+	
+	<bean id="faspFilesResource" class="com.vu.au.aspera.utils.resources.FaspFilesResourceImpl" />
+	<bean id="faspSessionsResource" class="com.vu.au.aspera.utils.resources.FaspSessionsResourceImpl" />
+
+	<bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+		<property name="version" value="2.0" />
+		<property name="resourcePackage" value="com.vu.au.aspera.utils.resources" />
+		<property name="basePath" value="/aspera-utils-service/1.0/" />
+		<property name="title" value="Aspera Utils Service" />
+		<property name="description" value="A REST service to query for Aspera transfer sessions and files." />
+		<property name="contact" value=""/>
+		<property name="license" value=""/>
+	</bean>
+	
+	<jaxrs:server id="restContainer" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="faspFilesResource" />
+			<ref bean="faspSessionsResource" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<ref bean="jacksonJsonProvider" />
+			<ref bean="serverExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<ref bean="swagger2Feature" />
+		</jaxrs:features>
+	</jaxrs:server>
+
+</beans>

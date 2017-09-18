@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.io.BufferedReader"/>
+<fullyQualifiedTypeName name="java.io.IOException"/>
+<fullyQualifiedTypeName name="java.io.InputStream"/>
+<fullyQualifiedTypeName name="java.io.BufferedInputStream"/>
+<fullyQualifiedTypeName name="javax.jws.soap.SOAPBinding"/>
+<fullyQualifiedTypeName name="com.vu.au.aspera.soap.client.model.job.JobResultType"/>
+<fullyQualifiedTypeName name="com.vu.au.aspera.soap.client.AsperaSOAPClient"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="com.test.file.upload.FileUploadInput"/>
+<fullyQualifiedTypeName name="com.vu.au.helpers.crypto.api.KeyStoreHelper"/>
+<fullyQualifiedTypeName name="com.vu.au.key.generator.KeyManagerGenerator"/>
+<fullyQualifiedTypeName name="javax.ws.rs.PUT"/>
+</qualifiedTypeNameHistroy>

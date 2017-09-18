@@ -1,0 +1,104 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       
+   	<context:component-scan base-package="
+		com.vu.au.jobrunner.dao" />
+		
+	<!-- TOOLS -->
+ 
+ 	<bean id="fileManagerProcessor" class="com.vu.au.jobrunner.processor.filemanager.FileManagerProcessor"/>
+	
+	<bean id="fileManagerRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute" >
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.filemanager.enabled:#{false}}"></property>
+		<property name="processor" ref="fileManagerProcessor"></property>
+		<property name="type" value="File Manager"></property>
+	</bean>
+	
+	<bean id="fileTransferProcessor" class="com.vu.au.jobrunner.processor.filetransfer.FileTransferProcessor"/>
+	
+	<bean id="fileTransferRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.filetransfer.enabled:#{false}}"></property>
+		<property name="processor" ref="fileTransferProcessor"></property>
+		<property name="type" value="File Transfer"></property>
+	</bean>
+	
+	<bean id="mediaValidationProcessor" class="com.vu.au.jobrunner.processor.mediavalidation.MediaValidationProcessor"/>
+	
+	<bean id="mediaValidationRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.mediavalidation.enabled:#{false}}"></property>
+		<property name="processor" ref="mediaValidationProcessor"></property>
+		<property name="type" value="Media Validation"></property>
+	</bean>
+	
+	<bean id="packagerProcessor" class="com.vu.au.jobrunner.processor.packager.PackagerProcessor"/>
+
+	<bean id="packagerRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.packager.enabled:#{false}}"></property>
+		<property name="processor" ref="packagerProcessor"></property>
+		<property name="type" value="Package"></property>
+	</bean>
+	
+	<bean id="pmeEncryptorProcessor" class="com.vu.au.jobrunner.processor.pmeencryptor.PmeEncryptorProcessor"/>
+
+	<bean id="pmeEncryptorRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.pmeencryptor.enabled:#{false}}"></property>
+		<property name="processor" ref="pmeEncryptorProcessor"></property>
+		<property name="type" value="PME Encryptor"></property>
+	</bean>
+	
+	<bean id="m3u8BitrateSelectorProcessor" class="com.vu.au.jobrunner.processor.m3u8bitrateselector.M3U8BitrateSelectorProcessor"/>
+
+	<bean id="m3u8BitrateSelectorRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.m3u8bitrateselector.enabled:#{false}}"></property>
+		<property name="processor" ref="m3u8BitrateSelectorProcessor"></property>
+		<property name="type" value="M3U8 Bitrate Selector"></property>
+	</bean>
+	
+	<bean id="dummyProcessor" class="com.vu.au.jobrunner.processor.dummy.DummyProcessor"/>
+
+	<bean id="dummyRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.dummy.enabled:#{false}}"></property>
+		<property name="processor" ref="dummyProcessor"></property>
+		<property name="type" value="Dummy"></property>
+	</bean>
+	
+	<bean id="stornextProcessor" class="com.vu.au.jobrunner.processor.stornext.StornextProcessor"/>
+
+	<bean id="stornextRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.stornext.enabled:#{false}}"></property>
+		<property name="processor" ref="stornextProcessor"></property>
+		<property name="type" value="Stornext"></property>
+		<property name="route" value="jobrunner.stornext"></property>
+	</bean>
+	
+	<bean id="rtvodProcessor" class="com.vu.au.jobrunner.processor.rtvod.RtvodProcessor"/>
+
+	<bean id="rtvodRoute" class="com.vu.au.jobrunner.route.tool.ToolRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.rtvod.enabled:#{false}}"></property>
+		<property name="processor" ref="rtvodProcessor"></property>
+		<property name="type" value="RTVOD"></property>
+	</bean>
+	
+	<bean id="checksumUpdateRoute" class="com.vu.au.jobrunner.route.tool.ChecksumUpdateToolRoute" >
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.checksum.update.enabled:#{false}}"></property>
+		<property name="type" value="Update Checksum"></property>
+	</bean>
+	
+	<!-- CALLBACKS -->
+	
+	<bean id="adonissCallbackProcessor" class="com.vu.au.jobrunner.processor.callback.AdonissCallbackProcessor"/>
+
+	<bean id="adonissCallbackRoute" class="com.vu.au.jobrunner.route.callback.CallbackRoute">
+		<property name="startupRoute" value="${jobrunner.message.broker.jobrunner.callback.adoniss.enabled:#{false}}"></property>
+		<property name="processor" ref="adonissCallbackProcessor"></property>
+		<property name="type" value="Adoniss"></property>
+	</bean>
+
+</beans>

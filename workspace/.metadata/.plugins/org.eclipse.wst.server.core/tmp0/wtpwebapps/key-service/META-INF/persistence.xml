@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="key-db" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<non-jta-data-source>java:/comp/env/jdbc/KeyDB</non-jta-data-source>
+		<class>com.vu.au.models.key.Keys</class>
+		<class>com.vu.au.models.key.TrackType</class>
+		<class>com.vu.au.models.key</class>
+		
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" /> 
+			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"  />	
+			<property name="hibernate.default_schema" value="automation"/>
+		</properties>
+
+	</persistence-unit>
+</persistence>

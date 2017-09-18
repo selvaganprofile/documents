@@ -1,0 +1,88 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:cxf="http://cxf.apache.org/core"
+	   
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		 http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+	
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	
+	<context:component-scan base-package="com.vu.au" />
+	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging />
+		</cxf:features>
+	</cxf:bus>
+	
+	<bean id="credentialsProvider" class="com.amazonaws.auth.profile.ProfileCredentialsProvider">
+		<constructor-arg name="profilesConfigFilePath" value="/etc/vbq/automation/automationEnvironment.properties"/>
+		<constructor-arg name="profileName" value="default"/>
+	</bean>
+	
+	<bean id="clientConfiguration" class="com.amazonaws.ClientConfiguration">
+		<property name="protocol" value="HTTP"/>
+		<property name="connectionTimeout" value="${intellivu-queue-timeout}"/>
+		<property name="maxErrorRetry" value="${intellivu-queue-max-error-retry}"/>
+		<property name="maxConnections" value="${intellivu-queue-max-connections}"/>
+		<property name="proxyHost" value="${forwardproxy.url:#{null}}"/>
+		<property name="proxyPort" value="${forwardproxy.port:#{0}}"/>
+	</bean>
+				
+    <bean id="connectionFactoryBuilder" class="com.amazon.sqs.javamessaging.SQSConnectionFactory$Builder">
+        <property name="regionName" value="${intellivu-queue-region}"/>
+        <property name="awsCredentialsProvider" ref="credentialsProvider"/>
+        <property name="clientConfiguration" ref="clientConfiguration"/>
+    </bean>
+ 
+    <bean id="connectionFactory" class="com.amazon.sqs.javamessaging.SQSConnectionFactory"
+          factory-bean="connectionFactoryBuilder"
+          factory-method="build"/>
+ 
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+    </bean>	
+		
+	<bean id="objectMapperCustom" class="com.vu.au.helpers.util.ObjectMapperCustom" />
+
+	<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+		<property name="mapper" ref="objectMapperCustom" />
+	</bean>
+	
+	<bean id="serverExceptionHandler" class="com.vu.au.helpers.server.ServerExceptionHandler" />
+	
+	<bean id="intelliVUJmsTemplate" class="com.vu.au.helpers.jms.IntelliVUJmsTemplate" />
+
+	<bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+		<property name="version" value="2.0" />
+		<property name="resourcePackage" value="com.vu.au.workorder.resources" />
+		<property name="basePath" value="/work-order-service/1.0" />
+		<property name="title" value="Work Order Service" />
+		<property name="description" value="A REST service to query for work order things." />
+		<property name="contact" value=""/>
+		<property name="license" value=""/>
+	</bean>
+
+	<bean id="restContainer" class="com.vu.au.helpers.server.SimpleServer">
+		<property name="address" value="/" />
+		<property name="resourceAutoScan" value="true" />
+		<property name="providers">
+			<list>
+				<ref bean="jacksonJsonProvider"/>
+				<ref bean="serverExceptionHandler"/>
+			</list>
+		</property>
+		<property name="features">
+			<ref bean="swagger2Feature" />
+		</property>
+	</bean>
+
+</beans>

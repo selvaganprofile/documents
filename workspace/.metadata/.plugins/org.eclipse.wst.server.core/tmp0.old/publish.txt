@@ -1,0 +1,9 @@
+#Tomcat publish data
+#Thu May 04 07:32:35 PDT 2017
+org.eclipse.jst.j2ee.server\:work-order-model=WEB-INF/lib/work-order-model-1.0.jar
+org.eclipse.jst.j2ee.server\:validation-core=WEB-INF/lib/validation-core-1.0.jar
+org.eclipse.jst.j2ee.server\:stornext-api=WEB-INF/lib/stornext-api-1.0.jar
+org.eclipse.jst.j2ee.server\:automation-apis=WEB-INF/lib/automation-apis-1.0.jar
+org.eclipse.jst.j2ee.server\:profile-model=WEB-INF/lib/profile-model-1.0.jar
+org.eclipse.jst.j2ee.server\:validation-model=WEB-INF/lib/validation-model-1.0.jar
+org.eclipse.jst.jee.server\:/binary\:C\:\\Users\\ssakthivel\\.m2\\repository\\org\\springframework\\spring-web\\4.2.5.RELEASE\\spring-web-4.2.5.RELEASE.jar=WEB-INF/lib/spring-web-4.2.5.RELEASE.jar

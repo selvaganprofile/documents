@@ -1,0 +1,111 @@
+package com.vu.au.key.resources;
+
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.vu.au.helpers.exceptions.ServiceException;
+import com.vu.au.helpers.exceptions.handler.ApiExceptionHandler;
+import com.vu.au.helpers.logging.Log;
+import com.vu.au.helpers.timer.Timer;
+import com.vu.au.helpers.util.MapConvertUtils;
+import com.vu.au.key.services.CencService;
+import com.vu.au.models.key.KeyType;
+import com.vu.au.models.key.request.KeyBasic;
+import com.vu.au.models.key.response.KeyResponse;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@Path("/keys/cenc")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Api(value = "/keys/cenc", description = "Operations on Cenc Keys")
+public class CencResource {
+
+	@Log
+	private static Logger log;
+
+	@Inject
+	private CencService cencService;
+
+	@GET
+	@Timer
+	@ApiExceptionHandler
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Path("/")
+	@ApiOperation(value = "Print Cenc Keys", notes = "Get a set of Cenc Keys matching the params", response = KeyResponse.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Successfully retrieved keySet", response = KeyResponse.class),
+			@ApiResponse(code = 500, message = "Internal Server Error") })
+	public Response getCencKeySet(@ApiParam(value = "Active", required = true) @QueryParam("active") Boolean active,
+			@ApiParam(value = "Asset ID", required = true) @QueryParam("assetId") String assetId,
+			@ApiParam(value = "Origin ID", required = true) @QueryParam("originId") String originId,
+			@ApiParam(value = "Track Type Name", required = true) @DefaultValue("N/A") @QueryParam("trackTypeName") String trackTypeName,
+			@ApiParam(value = "Remove Hyphen KeyId", required = true) @DefaultValue("false") @QueryParam("removeHyphenKeyId") Boolean removeHyphenKeyId,
+			@ApiParam(value = "Query params", required = true) @Context UriInfo uri) throws ServiceException {
+
+		log.info(String.format("Starting getCencKeySet by: %s", uri.getQueryParameters()));
+
+		Multimap<String, String> queryParameters = ArrayListMultimap.create();
+		queryParameters.putAll(MapConvertUtils.toMultiMap(uri.getQueryParameters()));
+		queryParameters.put("keyType", KeyType.Cenc.toString());
+		KeyResponse cencKeyResponse = cencService.getCencKeySet(queryParameters);
+
+		return Response.status(Response.Status.OK).entity(cencKeyResponse).build();
+	}
+
+	@POST
+	@Timer
+	@ApiExceptionHandler
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Path("/")
+	@ApiOperation(value = "Create Keys", notes = "Creat a set of Cenc Keys matching the params", response = KeyResponse.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid parameters", response = KeyResponse.class),
+			@ApiResponse(code = 200, message = "Successfully created keySet", response = KeyResponse.class),
+			@ApiResponse(code = 500, message = "Internal Server Error") })
+	public Response createCencKeySet(@ApiParam(value = "Key initial param", required = true) KeyBasic cencKeyBasic)
+			throws ServiceException {
+
+		log.info(String.format("Starting createCencKeySet by: %s", cencKeyBasic.toString()));
+
+		KeyResponse cencKeyResponse = cencService.createCencKeySet(cencKeyBasic);
+
+		return Response.status(Response.Status.OK).entity(cencKeyResponse).build();
+	}
+	@POST
+	@Timer
+	@ApiExceptionHandler
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Path("/")
+	@ApiOperation(value = "Update Keys", notes = "Creat a set of Cenc Keys matching the params", response = KeyResponse.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid parameters", response = KeyResponse.class),
+			@ApiResponse(code = 200, message = "Successfully created keySet", response = KeyResponse.class),
+			@ApiResponse(code = 500, message = "Internal Server Error") })
+	public Response updateCencKeySet(@ApiParam(value = "Key initial param", required = true) KeyBasic cencKeyBasic)
+			throws ServiceException {
+
+		log.info(String.format("Starting createCencKeySet by: %s", cencKeyBasic.toString()));
+
+		KeyResponse cencKeyResponse = cencService.createCencKeySet(cencKeyBasic);
+
+		return Response.status(Response.Status.OK).entity(cencKeyResponse).build();
+	}
+}

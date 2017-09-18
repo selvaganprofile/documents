@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.m2e.core.pom.dependencies">
+	</section>
+	<section name="org.eclipse.m2e.core.pom.overview">
+		<list key="ciManagementUrl">
+		</list>
+		<list key="ciManagementSystem">
+		</list>
+		<list key="issueManagementSystem">
+		</list>
+		<list key="issueManagementUrl">
+		</list>
+	</section>
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="C:\AVC\workspace\profile-service\profile-model"/>
+			<item value="C:\AVC\workspace\profile-service"/>
+			<item value="C:\AVC\workspace"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="MavenCheckoutLocationPage">
+		<list key="scmUrl">
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/job-runner-camel.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/s3-file-manager-service.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/key-service.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/vault-service.git"/>
+			<item value="scm:git:http://stash.vubiquity.com:7990/projects/AA/repos/vault-service/browse"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/execution-service.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/vcs/stornext-api.git"/>
+			<item value="scm:git:http://dvillarino@stash.vubiquity.com:7990/scm/vcs/stornext-api.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/validation-service.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/work-order-service.git"/>
+			<item value="scm:git:http://ssakthivel@stash.vubiquity.com:7990/scm/aa/profile-service.git"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardLocationPage">
+		<list key="location">
+			<item value="C:\AVC\workspace"/>
+			<item value="C:\AVC\workspace\aspera-utils\aspera-utils-soap-client"/>
+			<item value="C:\AVC\workspace\profile\profile-service"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+</section>

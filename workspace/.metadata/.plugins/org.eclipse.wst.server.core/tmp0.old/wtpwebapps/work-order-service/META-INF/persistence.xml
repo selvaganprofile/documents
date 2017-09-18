@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="workorder-db"
+		transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<non-jta-data-source>java:/comp/env/jdbc/WorkOrderDB</non-jta-data-source>
+		<class>com.vu.au.models.workorder.WorkOrder</class>
+		<class>com.vu.au.models.workorder.WorkOrderAsset</class>
+		<class>com.vu.au.models.workorder.WorkOrderStatus</class>
+		<class>com.vu.au.models.workorder.Request</class>
+		<class>com.vu.au.models.workorder.RequestStatus</class>
+		<class>com.vu.au.models.workorder.WorkOrderHistory</class>
+		<class>com.vu.au.models.workorder.Affiliate</class>
+		<class>com.vu.au.models.workorder.Headend</class>
+		<class>com.vu.au.models.workorder.AffiliateHeadend</class>
+		<class>com.vu.au.models.workorder.Provider</class>
+		<class>com.vu.au.models.workorder.RequestData</class>
+		<class>com.vu.au.models.workorder.WorkOrderHistoryView</class>
+		<class>com.vu.au.models.workorder.WorkOrderType</class>
+		<class>com.vu.au.models.workorder.RequestHistory</class>
+		<class>com.vu.au.models.workorder.RequestHistoryView</class>
+		<class>com.vu.au.models.workorder.RequestTimeReportView</class>
+		<class>com.vu.au.models.workorder.Asset</class>
+		<class>com.vu.au.models.workorder.WorkOrderFile</class>
+		<class>com.vu.au.models.workorder.ManualTask</class>
+		<class>com.vu.au.models.workorder.Headend</class>
+		<class>com.vu.au.models.workorder.HeadendDrm</class>
+		<class>com.vu.au.models.workorder.Notification</class>
+		<class>com.vu.au.models.workorder.TimeReportView</class>
+		<class>com.vu.au.models.workorder.RequestTimeReportView</class>
+		<class>com.vu.au.models.workorder.ExternalSystem</class>
+		<class>com.vu.au.models.workorder.ExternalRequest</class>
+		<class>com.vu.au.models.workorder.Facility</class>
+		<class>com.vu.au.models.workorder.FacilityType</class>
+		<class>com.vu.au.models.workorder.AvcGroupAsset</class>
+		<class>com.vu.au.models.workorder</class>
+		<class>com.vu.au.models.workorder.MediaElement</class>
+
+		<!-- PROFILE MODEL -->
+		<class>com.vu.au.models.profile.Profile</class>
+		<class>com.vu.au.models.profile.ProfileGroup</class>
+		<class>com.vu.au.models.profile.ProfileGroupRule</class>
+		<class>com.vu.au.models.profile.ExecutionProfile</class>
+		<class>com.vu.au.models.profile.ExecutionProfileOutput</class>
+		<class>com.vu.au.models.profile.ExecutionProfileOutputValue</class>
+		<class>com.vu.au.models.profile.EncoderType</class>
+		<class>com.vu.au.models.profile.AffiliateDrm</class>
+		<class>com.vu.au.models.profile.Drm</class>
+		<class>com.vu.au.models.profile.Playlist</class>
+		<class>com.vu.au.models.profile.ContentType</class>
+		<class>com.vu.au.models.profile.Snippet</class>
+		<class>com.vu.au.models.profile.SnippetAttribute</class>
+		<class>com.vu.au.models.profile.SnippetAttrValue</class>
+		
+		<!-- LIBRARY MODEL -->
+		<class>com.vu.au.models.library.AvcAsset</class>	
+		<class>com.vu.au.models.library.AvcAssetFile</class>
+		<class>com.vu.au.models.library.AvcAssetQC</class>
+		<class>com.vu.au.models.library.AvcAssetFileStream</class>
+		<class>com.vu.au.models.library.AdBreak</class>
+		<class>com.vu.au.models.library.AppliedAssetTool</class>
+		<class>com.vu.au.models.library.AvcAssetTool</class>
+
+		<properties>
+			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="javax.persistence.lock.timeout" value="0" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.temp.use_jdbc_metadata_defaults"
+				value="false" />
+			<property name="hibernate.default_schema" value="automation" />
+			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+		</properties>
+
+	</persistence-unit>
+</persistence>

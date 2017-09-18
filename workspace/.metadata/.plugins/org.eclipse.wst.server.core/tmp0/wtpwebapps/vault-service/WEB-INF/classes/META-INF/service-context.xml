@@ -1,0 +1,95 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	   xmlns:cxf="http://cxf.apache.org/core"
+	   
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		 http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd 
+		 http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+	
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	
+	<context:component-scan base-package="com.vu.au" />
+	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<cxf:bus>
+		<cxf:features>
+			<cxf:logging />
+		</cxf:features>
+	</cxf:bus>
+	
+	<bean id="objectMapperCustom" class="com.vu.au.helpers.util.ObjectMapperCustom" />
+
+	<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+		<property name="mapper" ref="objectMapperCustom" />
+	</bean>
+	
+	<bean id="serverExceptionHandler" class="com.vu.au.helpers.server.ServerExceptionHandler" />
+	
+	
+	<bean id="keyManager" class="com.vu.au.helpers.crypto.KeyManager" />
+	
+	<bean id="calculateDestinationResourceImpl" class="com.vu.au.vault.resources.CalculateDestinationResourceImpl" />
+	<bean id="contentTypeVaultAccountResourceImpl" class="com.vu.au.vault.resources.ContentTypeVaultAccountResourceImpl" />
+	<bean id="contentUrlResourceImpl" class="com.vu.au.vault.resources.ContentUrlResourceImpl" />
+	<bean id="deliverySessionResourceImpl" class="com.vu.au.vault.resources.DeliverySessionResourceImpl" />
+	<bean id="originResourceImpl" class="com.vu.au.vault.resources.OriginResourceImpl" />
+	<bean id="s3BucketResourceImpl" class="com.vu.au.vault.resources.S3BucketResourceImpl" />
+	<bean id="vaultAccountResourceImpl" class="com.vu.au.vault.resources.VaultAccountResourceImpl" />
+	<bean id="vaultItemHistoryResourceImpl" class="com.vu.au.vault.resources.VaultItemHistoryResourceImpl" />
+	<bean id="vaultItemResourceImpl" class="com.vu.au.vault.resources.VaultItemResourceImpl" />
+	<bean id="vaultTypeResourceImpl" class="com.vu.au.vault.resources.VaultTypeResourceImpl" />
+	<bean id="encapsulationTypeResourceImpl" class="com.vu.au.vault.resources.EncapsulationTypeResourceImpl" />
+	<bean id="vaultStorageTypeResourceImpl" class="com.vu.au.vault.resources.VaultStorageTypeResourceImpl" />
+	<bean id="vaultStorageGroupCollectionResourceImpl" class="com.vu.au.vault.resources.VaultStorageGroupCollectionResourceImpl" />
+	<bean id="vaultStorageGroupResourceImpl" class="com.vu.au.vault.resources.VaultStorageGroupResourceImpl" />
+	<bean id="vaultStorageGroupSecurityKeyResourceImpl" class="com.vu.au.vault.resources.VaultStorageGroupSecurityKeyResourceImpl" />
+
+	<bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+		<property name="version" value="2.0" />
+		<property name="resourcePackage" value="com.vu.au.vault.resources" />
+		<property name="basePath" value="/vault-service/1.0/" />
+		<property name="title" value="Vault Service" />
+		<property name="description" value="A REST service to query for vault things." />
+		<property name="contact" value=""/>
+		<property name="license" value=""/>
+	</bean>
+	
+	<jaxrs:server id="restContainer" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="calculateDestinationResourceImpl" />
+			<ref bean="contentTypeVaultAccountResourceImpl" />
+			<ref bean="contentUrlResourceImpl" />
+			<ref bean="deliverySessionResourceImpl" />
+			<ref bean="originResourceImpl" />
+			<ref bean="s3BucketResourceImpl" />
+			<ref bean="vaultAccountResourceImpl" />
+			<ref bean="vaultItemHistoryResourceImpl" />
+			<ref bean="vaultItemResourceImpl" />
+			<ref bean="vaultTypeResourceImpl" />
+			<ref bean="encapsulationTypeResourceImpl" />
+			<ref bean="vaultStorageTypeResourceImpl" />
+			<ref bean="vaultStorageGroupCollectionResourceImpl" />
+			<ref bean="vaultStorageGroupResourceImpl" />
+			<ref bean="vaultStorageGroupSecurityKeyResourceImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:providers>
+			<ref bean="jacksonJsonProvider" />
+			<ref bean="serverExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:features>
+			<ref bean="swagger2Feature" />
+		</jaxrs:features>
+	</jaxrs:server>
+
+</beans>

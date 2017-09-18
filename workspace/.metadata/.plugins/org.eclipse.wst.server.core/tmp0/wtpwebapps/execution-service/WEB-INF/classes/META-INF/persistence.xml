@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="execution-db"
+		transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<non-jta-data-source>java:/comp/env/jdbc/ExecutionDB</non-jta-data-source>
+		<class>com.vu.au.models.execution.Execution</class>
+		<class>com.vu.au.models.execution.Facility</class>
+		<class>com.vu.au.models.execution.ExecutionStatus</class>
+		<class>com.vu.au.models.execution.ExecutionEngine</class>
+		<class>com.vu.au.models.execution.ExecutionEnginePath</class>
+		<class>com.vu.au.models.execution.ExecutionHistory</class>
+		<class>com.vu.au.models.execution.ExecutionJob</class>
+		<class>com.vu.au.models.execution.ExecutionJobHistory</class>
+		<class>com.vu.au.models.execution.ExecutionStatus</class>
+		<class>com.vu.au.models.execution.Token</class>
+		<class>com.vu.au.models.execution.TokenExecutionEngine</class>
+		<class>com.vu.au.models.execution.AutomatedRunWoView</class>
+		<class>com.vu.au.models.execution.VwIntelliVuAlarmCheck</class>
+		<class>com.vu.au.models.execution.VwIntelliVuAlarmClear</class>
+		<class>com.vu.au.models.execution.SystemProperties</class>
+		<class>com.vu.au.models.execution.ExecutionJobTimeReportView</class>
+		<class>com.vu.au.models.execution.MediaFolder</class>
+		<class>com.vu.au.models.execution</class>
+
+		<!-- From other projects -->
+		<class>com.vu.au.models.profile.Profile</class>
+		<class>com.vu.au.models.profile.ProfileGroup</class>
+		<class>com.vu.au.models.profile.ProfileGroupRule</class>
+		<class>com.vu.au.models.profile.ExecutionProfile</class>
+		<class>com.vu.au.models.profile.ExecutionProfileOutput</class>
+		<class>com.vu.au.models.profile.ExecutionProfileOutputValue</class>
+		<class>com.vu.au.models.profile.EncoderType</class>
+		<class>com.vu.au.models.profile.AffiliateDrm</class>
+		<class>com.vu.au.models.profile.Drm</class>
+		<class>com.vu.au.models.profile.Playlist</class>
+		<class>com.vu.au.models.profile.ContentType</class>
+		<class>com.vu.au.models.profile.Snippet</class>
+		<class>com.vu.au.models.profile.SnippetAttribute</class>
+		<class>com.vu.au.models.profile.SnippetAttrValue</class>
+		<class>com.vu.au.models.profile.EntityType</class>
+		<class>com.vu.au.models.profile.PlaylistEntry</class>
+		<class>com.vu.au.models.profile</class>
+
+		<!-- VAULT -->
+		<class>com.vu.au.models.vault.VaultAccount</class>
+		<class>com.vu.au.models.vault.VaultItem</class>
+		<class>com.vu.au.models.vault.VaultItemStatus</class>
+		<class>com.vu.au.models.vault.VaultType</class>
+		<class>com.vu.au.models.vault.Origin</class>
+		<class>com.vu.au.models.vault.ContentTypeVaultAccount</class>
+		<class>com.vu.au.models.vault.DeliverySession</class>
+		<class>com.vu.au.models.vault.VaultStorageGroupCollection</class>
+		<class>com.vu.au.models.vault.VaultStorageGroup</class>
+		<class>com.vu.au.models.vault.VaultStorageGroupSecurityKey</class>
+		<class>com.vu.au.models.vault</class>
+
+		<!-- WORKORDER -->
+		<class>com.vu.au.models.workorder.WorkOrder</class>
+		<class>com.vu.au.models.workorder.WorkOrderHistory</class>
+		<class>com.vu.au.models.workorder.WorkOrderStatus</class>
+		<class>com.vu.au.models.workorder.WorkOrderType</class>
+		<class>com.vu.au.models.workorder.Request</class>
+		<class>com.vu.au.models.workorder.RequestStatus</class>
+		<class>com.vu.au.models.workorder.Provider</class>
+		<class>com.vu.au.models.workorder.RequestData</class>
+		<class>com.vu.au.models.workorder.WorkOrderHistoryView</class>
+		<class>com.vu.au.models.workorder.Asset</class>
+		<class>com.vu.au.models.workorder.WorkOrderFile</class>
+		<class>com.vu.au.models.workorder.Headend</class>
+		<class>com.vu.au.models.workorder.ManualTask</class>
+		<class>com.vu.au.models.workorder.HeadendDrm</class>
+		<class>com.vu.au.models.workorder.MediaElement</class>
+		<class>com.vu.au.models.workorder.ExternalSystem</class>
+
+
+		<!-- LIBRARY -->
+		<class>com.vu.au.models.library.AvcAsset</class>
+		<class>com.vu.au.models.library.AvcAssetQC</class>
+		<class>com.vu.au.models.library.AvcAssetFile</class>
+		<class>com.vu.au.models.library.AvcAssetFileStream</class>
+		<class>com.vu.au.models.library.AdBreak</class>
+		<class>com.vu.au.models.library.AvcAssetTool</class>
+
+		<properties>
+			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="javax.persistence.lock.timeout" value="0" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.temp.use_jdbc_metadata_defaults"
+				value="false" />
+			<property name="hibernate.default_schema" value="automation" />
+			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+		</properties>
+
+	</persistence-unit>
+</persistence>
